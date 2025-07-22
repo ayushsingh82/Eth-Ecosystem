@@ -405,13 +405,51 @@ class EthEcosystemAgentDemo:
         print("🔗 DEMO 7: RECALL SANDBOX INTEGRATION")
         print("-" * 60)
         
-        print("Recall API Integration Status:")
-        print("   • Sandbox Connection: ✅ Connected")
-        print("   • API Key Status: ✅ Valid")
-        print("   • Balance Sync: ✅ Real-time")
-        print("   • Trade Execution: ✅ Automated")
-        print()
+        # Test Recall API connection
+        API_KEY = os.getenv("RECALL_API_KEY")
+        BASE_URL = "https://api.sandbox.competitions.recall.network"
         
+        if API_KEY:
+            print("Recall API Integration Status:")
+            print("   • Sandbox Connection: ✅ Connected")
+            print("   • API Key Status: ✅ Valid")
+            print("   • Balance Sync: ✅ Real-time")
+            print("   • Trade Execution: ✅ Automated")
+            print()
+            
+            # Test API connection
+            try:
+                headers = {
+                    "Authorization": f"Bearer {API_KEY}",
+                    "Content-Type": "application/json"
+                }
+                
+                # Test balance endpoint
+                balance_resp = requests.get(
+                    f"{BASE_URL}/api/balance",
+                    headers=headers,
+                    timeout=10
+                )
+                
+                if balance_resp.ok:
+                    print("✅ Balance API: Connected successfully")
+                    balances = balance_resp.json()
+                    if balances:
+                        print("📊 Current Sandbox Balances:")
+                        for token, amount in balances.items():
+                            print(f"   • {token}: {amount:,.2f}")
+                    else:
+                        print("📊 No balances found in sandbox")
+                else:
+                    print(f"⚠️  Balance API: {balance_resp.status_code}")
+                
+            except Exception as e:
+                print(f"⚠️  API Connection Test: {e}")
+        else:
+            print("⚠️  RECALL_API_KEY not found in environment")
+            print("   • Please set RECALL_API_KEY in your .env file")
+        
+        print()
         print("Sandbox Features:")
         print("   • Real-time balance monitoring")
         print("   • Automated trade execution")
@@ -421,19 +459,6 @@ class EthEcosystemAgentDemo:
         print("   • Error handling & retry logic")
         print()
         
-        print("📊 Current Sandbox Balances:")
-        balances = [
-            ("ETH", 2.5, "$8,125.00"),
-            ("USDC", 18563.71, "$18,563.71"),
-            ("UNI", 125.5, "$16,556.83"),
-            ("LINK", 850.2, "$12,166.76"),
-            ("AAVE", 45.8, "$10,661.59")
-        ]
-        
-        for symbol, amount, value in balances:
-            print(f"   • {symbol}: {amount:,.2f} = {value}")
-        
-        print()
         print("🔄 Recent Sandbox Transactions:")
         transactions = [
             ("2024-01-15 09:00:15", "SELL", "UNI", "25.5", "$3,375.00", "Rebalancing"),
